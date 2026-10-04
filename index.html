@@ -10,13 +10,13 @@
 <body>
 <header class="topbar">
   <div class="brand"><div class="logo">☁</div><div><b>TINE DISASTER WATCH</b><small>ติดตามสถานการณ์ภัยพิบัติแบบเรียลไทม์</small></div></div>
-  <div class="search"><input id="search" placeholder="ค้นหาจังหวัด เช่น ชลบุรี"><button id="searchBtn">ค้นหา</button></div>
+  <div class="search"><input id="search" placeholder="ค้นหาได้ทั่วประเทศไทย เช่น กรุงเทพฯ ชลบุรี อำเภอเมืองเชียงใหม่..." autocomplete="off"><button id="searchBtn">ค้นหา</button><div id="searchResults" class="search-results"></div></div>
   <button id="locate">📍 ตำแหน่งของฉัน</button>
 </header>
 <div class="layout">
   <aside class="side">
     <button class="active">⌂ หน้าหลัก</button>
-    <button>☁ สภาพอากาศ</button><button>🌧 ฝน</button><button>🌀 ติดตามพายุ</button><button>🌊 น้ำท่วม</button>
+    <button>☁ สภาพอากาศ</button><button>🌧 ฝน</button><button>🌀 ติดตามพายุ</button><button>🌊 น้ำท่วม</button><button id="timelineBtn">🕒 ไทม์ไลน์</button><button id="familyBtn">🏠 รายงานถึงบ้าน</button>
     <div class="layers"><b>ชั้นข้อมูลแผนที่</b>
       <label><input type="checkbox" id="stations" checked> สถานีจังหวัด</label>
       <label><input type="checkbox" id="rainDemo"> ฝนตัวอย่าง</label>
@@ -29,8 +29,11 @@
     <div class="alert"><b>⚠️ การแจ้งเตือน</b><p id="alert">กำลังตรวจสอบสภาพอากาศ...</p></div>
     <section class="card"><div class="head"><h2 id="place">กรุงเทพมหานคร</h2><span id="icon">☁️</span></div><div class="temp"><span id="temp">--</span>°C</div><div id="condition">กำลังโหลด...</div><div class="metrics"><div>ความชื้น<b id="hum">--%</b></div><div>ลม<b id="wind">--</b></div><div>ฝน<b id="rain">--</b></div></div></section>
     <section class="card"><div class="head"><h3>พยากรณ์รายชั่วโมง</h3><span>24 ชม.</span></div><div id="hours" class="hours"></div></section>
+    <section class="card timeline-card"><div class="head"><h3>🕒 สถานการณ์ล่าสุด</h3><span id="timelineUpdated">สด</span></div><div id="timeline" class="timeline"></div></section>
+    <section class="card family-card"><div class="head"><h3>🏠 รายงานถึงทางบ้าน</h3><button id="shareFamily" class="small-btn">แชร์</button></div><p>สร้างข้อความสรุปพื้นที่และสภาพอากาศปัจจุบันเพื่อส่งให้ครอบครัว</p><div class="family-actions"><button id="lineShare">LINE</button><button id="copyReport">คัดลอกข้อความ</button></div></section>
     <section class="card"><h3>ติดตามสถานการณ์</h3><div class="row">🌀 พายุ <b>รอข้อมูลจริง</b></div><div class="row">🌊 ระดับน้ำ <b>รอเชื่อมต่อสถานี</b></div><div class="row">🚨 สถานะ <b id="risk">กำลังประเมิน</b></div></section>
     <section class="card"><div class="head"><h3>🏠 ความพร้อมบ้าน</h3><b id="score">0%</b></div><label><input class="ready" type="checkbox"> ไฟฉาย/แบตสำรอง</label><label><input class="ready" type="checkbox"> ย้ายของขึ้นที่สูง</label><label><input class="ready" type="checkbox"> น้ำและอาหารสำรอง</label><label><input class="ready" type="checkbox"> รู้จุดอพยพ</label></section>
+    <div id="reportModal" class="modal hidden"><div class="modal-box"><button id="closeModal" class="close">×</button><h3>รายงานถึงทางบ้าน</h3><label>ชื่อผู้รายงาน<input id="reportName" placeholder="เช่น Nonthawat"></label><label>สถานะ<select id="reportStatus"><option>ปลอดภัย</option><option>เฝ้าระวัง</option><option>ต้องการความช่วยเหลือ</option></select></label><label>ข้อความเพิ่มเติม<textarea id="reportNote" rows="3" placeholder="เช่น อยู่บ้าน ถนนยังสัญจรได้"></textarea></label><div class="family-actions"><button id="shareNow">แชร์รายงาน</button><button id="lineNow">ส่งผ่าน LINE</button></div><p class="privacy">ระบบนี้จะไม่ส่งข้อความเองโดยไม่มีการกดแชร์จากคุณ</p></div></div>
     <small class="note">แผนที่: OpenStreetMap • Leaflet<br>อากาศ: Open-Meteo<br>ชั้นฝน/ความเสี่ยงที่ระบุว่า “ตัวอย่าง” ยังไม่ใช่ข้อมูลเรดาร์จริง</small>
   </aside>
 </div>
