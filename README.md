@@ -1,17 +1,34 @@
-# TINE DISASTER WATCH — V2
-เวอร์ชันปรับหน้าเว็บเป็น Dashboard แผนที่ประเทศไทย
+# TINE DISASTER WATCH V4 — Disaster Map Prototype
 
-มีแผนที่ Leaflet/OpenStreetMap, จุดจังหวัด, ค้นหาพื้นที่, ตำแหน่งปัจจุบัน, สภาพอากาศและพยากรณ์รายชั่วโมงจาก Open-Meteo และ UI สำหรับฝน/พื้นที่เสี่ยง
+## Features in this frontend prototype
+- Thailand place search using Open-Meteo Geocoding (filters results to Thailand)
+- Interactive Leaflet / OpenStreetMap map
+- Weather and hourly forecast from Open-Meteo
+- Citizen incident report form with type, severity, place, optional coordinates, details and optional reporter name
+- Select report coordinates by clicking the map
+- Incident pins, recent report list, report details and share/copy text
+- Timeline view, layer toggles, mobile responsive layout
+- Privacy notice and explicit unverified status for public reports
 
-หมายเหตุ: ชั้น “ฝนตัวอย่าง” และ “พื้นที่เฝ้าระวังตัวอย่าง” ยังไม่ใช่ข้อมูลเรดาร์หรือคำเตือนภัยจริง
+## IMPORTANT LIMITATION
+This is currently a static GitHub Pages frontend. Reports are stored only in the submitting browser's localStorage. They do NOT appear to other users and may be lost if browser storage is cleared. Do not treat these reports as verified official warnings.
 
+## To make reports shared across all users
+Connect a shared backend such as Supabase:
+1. Create a Supabase project.
+2. Create an `reports` table with columns: `id`, `type`, `severity`, `location`, `lat`, `lon`, `details`, `reporter_name`, `created_at`, `verification_status`.
+3. Configure Row Level Security policies carefully. Public reads should exclude private personal information. Inserts should be rate-limited/validated through an Edge Function or secure API.
+4. Add only the public project URL and anon key to the frontend (never expose service_role keys).
+5. Replace localStorage load/save with database read/insert, subscribe to realtime updates, and add a moderation/admin flow.
+6. Add image uploads only after file size/type limits, abuse controls, and privacy rules are in place.
 
-## ค้นหาทั่วประเทศไทย
-ช่องค้นหาใช้ Open-Meteo Geocoding API เพื่อค้นหาสถานที่ในประเทศไทย ไม่จำกัดเฉพาะจังหวัดที่มีอยู่ในรายการตัวอย่าง และเมื่อเลือกผลลัพธ์จะย้ายแผนที่ไปยังพิกัดนั้นพร้อมโหลดสภาพอากาศ
+## Next production steps
+- Shared database and realtime updates
+- Admin moderation dashboard
+- Confirmed official flood/weather/water-level feeds
+- Verified shelter / hospital / rescue point dataset
+- Rate limiting, spam/report abuse protection
+- Push notifications after consent and secure service-worker setup
+- Privacy policy and retention/deletion process
 
-## V3 เพิ่มเติม
-- ไทม์ไลน์เหตุการณ์/สถานะล่าสุดในหน้าเว็บ
-- สร้างรายงานสถานะเพื่อส่งให้ครอบครัว
-- แชร์ผ่าน Web Share หรือคัดลอกข้อความ
-- เปิด LINE พร้อมข้อความรายงาน
-- ไม่มีการส่งข้อมูลหรือข้อความอัตโนมัติโดยไม่ได้กดแชร์
+Map: OpenStreetMap / Leaflet. Weather and geocoding: Open-Meteo. External services are subject to their terms and availability.

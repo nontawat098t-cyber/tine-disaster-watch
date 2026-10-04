@@ -1,43 +1,73 @@
 <!doctype html>
 <html lang="th">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>TINE DISASTER WATCH</title>
+<meta name="description" content="แผนที่ติดตามภัยพิบัติและรายงานจากประชาชนทั่วประเทศไทย">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="topbar">
-  <div class="brand"><div class="logo">☁</div><div><b>TINE DISASTER WATCH</b><small>ติดตามสถานการณ์ภัยพิบัติแบบเรียลไทม์</small></div></div>
-  <div class="search"><input id="search" placeholder="ค้นหาได้ทั่วประเทศไทย เช่น กรุงเทพฯ ชลบุรี อำเภอเมืองเชียงใหม่..." autocomplete="off"><button id="searchBtn">ค้นหา</button><div id="searchResults" class="search-results"></div></div>
-  <button id="locate">📍 ตำแหน่งของฉัน</button>
+ <a class="brand" href="#"><span class="logo">☁</span><span><b>TINE DISASTER WATCH</b><small>แผนที่ติดตามภัยพิบัติและรายงานจากประชาชน</small></span></a>
+ <div class="search"><input id="placeSearch" placeholder="ค้นหาจังหวัด อำเภอ ตำบล หรือสถานที่ในประเทศไทย"><button id="searchBtn">ค้นหา</button><div id="searchResults" class="search-results hidden"></div></div>
+ <button class="outline" id="locateBtn">📍 ตำแหน่งของฉัน</button>
 </header>
-<div class="layout">
-  <aside class="side">
-    <button class="active">⌂ หน้าหลัก</button>
-    <button>☁ สภาพอากาศ</button><button>🌧 ฝน</button><button>🌀 ติดตามพายุ</button><button>🌊 น้ำท่วม</button><button id="timelineBtn">🕒 ไทม์ไลน์</button><button id="familyBtn">🏠 รายงานถึงบ้าน</button>
-    <div class="layers"><b>ชั้นข้อมูลแผนที่</b>
-      <label><input type="checkbox" id="stations" checked> สถานีจังหวัด</label>
-      <label><input type="checkbox" id="rainDemo"> ฝนตัวอย่าง</label>
-      <label><input type="checkbox" id="riskDemo"> พื้นที่เฝ้าระวังตัวอย่าง</label>
-    </div>
-    <div class="legend"><b>ความเข้มฝน (ตัวอย่าง)</b><div class="bar"></div><span>0</span><span>10</span><span>30</span><span>60+</span></div>
-  </aside>
-  <section class="mapbox"><div id="map"></div><div class="maptools"><button id="plus">＋</button><button id="minus">－</button><button id="home">◎</button></div><div class="mapstatus">● แผนที่ออนไลน์ <span id="updated"></span></div></section>
-  <aside class="panel">
-    <div class="alert"><b>⚠️ การแจ้งเตือน</b><p id="alert">กำลังตรวจสอบสภาพอากาศ...</p></div>
-    <section class="card"><div class="head"><h2 id="place">กรุงเทพมหานคร</h2><span id="icon">☁️</span></div><div class="temp"><span id="temp">--</span>°C</div><div id="condition">กำลังโหลด...</div><div class="metrics"><div>ความชื้น<b id="hum">--%</b></div><div>ลม<b id="wind">--</b></div><div>ฝน<b id="rain">--</b></div></div></section>
-    <section class="card"><div class="head"><h3>พยากรณ์รายชั่วโมง</h3><span>24 ชม.</span></div><div id="hours" class="hours"></div></section>
-    <section class="card timeline-card"><div class="head"><h3>🕒 สถานการณ์ล่าสุด</h3><span id="timelineUpdated">สด</span></div><div id="timeline" class="timeline"></div></section>
-    <section class="card family-card"><div class="head"><h3>🏠 รายงานถึงทางบ้าน</h3><button id="shareFamily" class="small-btn">แชร์</button></div><p>สร้างข้อความสรุปพื้นที่และสภาพอากาศปัจจุบันเพื่อส่งให้ครอบครัว</p><div class="family-actions"><button id="lineShare">LINE</button><button id="copyReport">คัดลอกข้อความ</button></div></section>
-    <section class="card"><h3>ติดตามสถานการณ์</h3><div class="row">🌀 พายุ <b>รอข้อมูลจริง</b></div><div class="row">🌊 ระดับน้ำ <b>รอเชื่อมต่อสถานี</b></div><div class="row">🚨 สถานะ <b id="risk">กำลังประเมิน</b></div></section>
-    <section class="card"><div class="head"><h3>🏠 ความพร้อมบ้าน</h3><b id="score">0%</b></div><label><input class="ready" type="checkbox"> ไฟฉาย/แบตสำรอง</label><label><input class="ready" type="checkbox"> ย้ายของขึ้นที่สูง</label><label><input class="ready" type="checkbox"> น้ำและอาหารสำรอง</label><label><input class="ready" type="checkbox"> รู้จุดอพยพ</label></section>
-    <div id="reportModal" class="modal hidden"><div class="modal-box"><button id="closeModal" class="close">×</button><h3>รายงานถึงทางบ้าน</h3><label>ชื่อผู้รายงาน<input id="reportName" placeholder="เช่น Nonthawat"></label><label>สถานะ<select id="reportStatus"><option>ปลอดภัย</option><option>เฝ้าระวัง</option><option>ต้องการความช่วยเหลือ</option></select></label><label>ข้อความเพิ่มเติม<textarea id="reportNote" rows="3" placeholder="เช่น อยู่บ้าน ถนนยังสัญจรได้"></textarea></label><div class="family-actions"><button id="shareNow">แชร์รายงาน</button><button id="lineNow">ส่งผ่าน LINE</button></div><p class="privacy">ระบบนี้จะไม่ส่งข้อความเองโดยไม่มีการกดแชร์จากคุณ</p></div></div>
-    <small class="note">แผนที่: OpenStreetMap • Leaflet<br>อากาศ: Open-Meteo<br>ชั้นฝน/ความเสี่ยงที่ระบุว่า “ตัวอย่าง” ยังไม่ใช่ข้อมูลเรดาร์จริง</small>
-  </aside>
+<div class="app">
+ <aside class="left">
+  <button class="nav active" data-view="map">🗺️ แผนที่ภัยพิบัติ</button>
+  <button class="nav" data-view="timeline">🕒 ไทม์ไลน์</button>
+  <button class="nav" data-view="report">📣 แจ้งเหตุ</button>
+  <button class="nav" data-view="weather">🌦️ สภาพอากาศ</button>
+  <button class="nav" data-view="help">🛟 จุดช่วยเหลือ</button>
+  <button class="nav" data-view="safety">🏠 ความปลอดภัย</button>
+  <div class="layerbox"><b>ชั้นข้อมูล</b>
+   <label><input type="checkbox" id="showReports" checked> รายงานจากประชาชน</label>
+   <label><input type="checkbox" id="showWeather" checked> สถานี/สภาพอากาศ</label>
+   <label><input type="checkbox" id="showRisk"> พื้นที่ตัวอย่าง</label>
+  </div>
+  <div class="legend"><b>ระดับเหตุการณ์</b><p><i class="dot red"></i> น้ำท่วมหนัก / ต้องการความช่วยเหลือ</p><p><i class="dot orange"></i> น้ำท่วมปานกลาง</p><p><i class="dot yellow"></i> น้ำท่วมเล็กน้อย</p><p><i class="dot green"></i> คลี่คลายแล้ว</p></div>
+  <div class="smallnote">รายงานประชาชนไม่ใช่ประกาศยืนยันจากหน่วยงานรัฐ โปรดตรวจสอบข้อมูลก่อนเดินทาง</div>
+ </aside>
+ <main class="map-area" id="mapView">
+  <div id="map"></div>
+  <div class="maptools"><button id="zoomIn">＋</button><button id="zoomOut">－</button><button id="resetMap">◎</button></div>
+  <div class="maplabel"><span class="live-dot"></span> แผนที่ออนไลน์ <span id="updatedAt"></span></div>
+  <button class="float-report" id="openReport">＋ แจ้งจุดน้ำท่วม</button>
+ </main>
+ <aside class="right">
+  <section class="banner"><b>⚠️ สถานการณ์ล่าสุด</b><p id="topAlert">กำลังโหลดข้อมูลอากาศ...</p><small>ข้อมูลอัตโนมัติและรายงานจากประชาชนจะแสดงแยกแหล่งที่มา</small></section>
+  <section class="card weather">
+   <div class="cardhead"><h2 id="weatherPlace">กรุงเทพมหานคร</h2><span id="weatherIcon">⛅</span></div>
+   <div class="temp"><span id="temp">--</span><sup>°C</sup></div><div id="weatherText">กำลังโหลด...</div>
+   <div class="metrics"><div>ความชื้น<b id="humidity">--%</b></div><div>ลม<b id="wind">--</b></div><div>ฝน<b id="rain">--</b></div></div>
+  </section>
+  <section class="card"><div class="cardhead"><h3>รายงานในระบบ</h3><span id="reportCount">0 รายงาน</span></div><div class="statgrid"><div><b id="redCount">0</b><small>หนัก</small></div><div><b id="orangeCount">0</b><small>ปานกลาง</small></div><div><b id="yellowCount">0</b><small>เล็กน้อย</small></div></div><p class="hint">จำนวนนี้นับจากรายงานที่โหลดได้ในอุปกรณ์นี้ หรือฐานข้อมูลเมื่อเชื่อมต่อแล้ว</p></section>
+  <section class="card"><div class="cardhead"><h3>รายงานล่าสุด</h3><button class="textbtn" id="viewTimeline">ดูทั้งหมด</button></div><div id="recentReports" class="recent"><p class="hint">ยังไม่มีรายงานในอุปกรณ์นี้</p></div></section>
+  <section class="card"><div class="cardhead"><h3>พยากรณ์รายชั่วโมง</h3><span>8 ช่วงถัดไป</span></div><div id="hourly" class="hourly"></div></section>
+  <div class="footer-note">แผนที่ © OpenStreetMap · Leaflet · อากาศ Open-Meteo<br>ยังไม่ใช่ระบบแจ้งเตือนฉุกเฉินอย่างเป็นทางการ</div>
+ </aside>
 </div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="app.js"></script>
-</body>
-</html>
+
+<div id="reportModal" class="modal hidden">
+ <div class="modalbox">
+  <div class="modalhead"><h2>📣 แจ้งจุดน้ำท่วม/ภัยพิบัติ</h2><button id="closeReport" class="close">×</button></div>
+  <p class="hint">รายงานจะขึ้นบนแผนที่อุปกรณ์นี้ทันที หากต้องการให้ทุกคนเห็นร่วมกัน ต้องเชื่อมฐานข้อมูลกลางก่อน</p>
+  <form id="reportForm">
+   <label>ประเภทเหตุการณ์<select id="incidentType" required><option value="flood">น้ำท่วม</option><option value="landslide">ดินถล่ม</option><option value="storm">ลมพายุ</option><option value="road">ถนนผ่านไม่ได้</option><option value="other">เหตุอื่น ๆ</option></select></label>
+   <label>ระดับความรุนแรง<select id="severity" required><option value="red">🔴 รุนแรง / ต้องการความช่วยเหลือ</option><option value="orange">🟠 ปานกลาง / ผ่านลำบาก</option><option value="yellow">🟡 เล็กน้อย / เฝ้าระวัง</option><option value="green">🟢 คลี่คลายแล้ว</option></select></label>
+   <label>จังหวัด / อำเภอ / จุดสังเกต<input id="reportLocation" placeholder="เช่น อ.เมืองชลบุรี ใกล้ตลาด..." required></label>
+   <div class="two"><label>ละติจูด (ถ้ามี)<input id="reportLat" type="number" step="any" placeholder="กดเลือกจากแผนที่ได้"></label><label>ลองจิจูด (ถ้ามี)<input id="reportLon" type="number" step="any" placeholder="กดเลือกจากแผนที่ได้"></label></div>
+   <button type="button" id="pickLocation" class="outline full">📍 เลือกตำแหน่งจากแผนที่</button>
+   <label>รายละเอียด<textarea id="reportDetails" rows="3" placeholder="ระดับน้ำ ความยากในการเดินทาง ผลกระทบ ฯลฯ"></textarea></label>
+   <label>ชื่อผู้รายงาน (ไม่บังคับ)<input id="reporterName" placeholder="ไม่ต้องใส่ชื่อจริงก็ได้"></label>
+   <label class="checkline"><input id="consent" type="checkbox" required> ยินยอมให้แสดงรายละเอียดรายงานนี้ต่อสาธารณะ โดยไม่ใส่ข้อมูลส่วนตัวหรือที่อยู่บ้าน</label>
+   <button class="primary full" type="submit">บันทึกรายงาน</button>
+  </form>
+  <div id="reportMessage" class="message hidden"></div>
+ </div>
+</div>
+
+<div id="detailModal" class="modal hidden"><div class="modalbox"><div class="modalhead"><h2>รายละเอียดรายงาน</h2><button id="closeDetail" class="close">×</button></div><div id="detailContent"></div></div></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="app.js"></script>
+</body></html>
