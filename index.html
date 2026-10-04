@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#071827" />
+  <meta name="description" content="TINE DISASTER WATCH — แผนที่สภาพอากาศ พยากรณ์ฝน และข้อมูลเตรียมพร้อมรับมือภัยพิบัติ" />
+  <title>TINE DISASTER WATCH | ติดตามสภาพอากาศและภัยพิบัติ</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="TINE Disaster Watch หน้าหลัก"><span class="brand-mark">T</span><span><strong>TINE <span>DISASTER WATCH</span></strong><small>WEATHER · FLOOD · ALERTS</small></span></a>
+    <div class="top-status"><span class="live-dot"></span><span id="connection-status">กำลังเตรียมข้อมูล</span></div>
+  </header>
+
+  <main id="top" class="page-wrap">
+    <section class="hero">
+      <div class="hero-copy"><div class="eyebrow"><span class="eyebrow-line"></span> WEATHER INTELLIGENCE PLATFORM</div>
+        <h1>รู้ก่อน เตรียมพร้อม<br><span>รับมือทุกสภาพอากาศ</span></h1>
+        <p>ติดตามสภาพอากาศและพยากรณ์รายชั่วโมง พร้อมเครื่องมือช่วยเตรียมพร้อมรับมือฝนตกหนักและน้ำท่วม</p>
+      </div>
+      <div class="hero-date"><span class="mini-label">เวลาประเทศไทย</span><strong id="clock">--:--:--</strong><span id="today-date">กำลังโหลดวันที่</span></div>
+    </section>
+
+    <div class="notice"><span class="notice-icon">i</span><div><strong>ข้อมูลประกอบการติดตามสถานการณ์</strong><p>พยากรณ์อากาศเป็นข้อมูลจากแบบจำลอง ไม่ใช่การเตือนภัยอย่างเป็นทางการ หากเกิดเหตุฉุกเฉินให้ติดตามประกาศจากหน่วยงานรัฐและติดต่อสายด่วนที่เกี่ยวข้อง</p></div></div>
+
+    <section class="toolbar panel">
+      <div><label for="location-select">เลือกพื้นที่พยากรณ์</label><select id="location-select"><option value="13.7563,100.5018,Bangkok,กรุงเทพมหานคร">กรุงเทพมหานคร</option><option value="13.3611,100.9847,Chonburi,ชลบุรี">ชลบุรี</option><option value="18.7883,98.9853,Chiang Mai,เชียงใหม่">เชียงใหม่</option><option value="16.4322,102.8236,Khon Kaen,ขอนแก่น">ขอนแก่น</option><option value="7.8804,98.3923,Phuket,ภูเก็ต">ภูเก็ต</option><option value="9.1401,99.3331,Surat Thani,สุราษฎร์ธานี">สุราษฎร์ธานี</option><option value="14.9799,102.0978,Nakhon Ratchasima,นครราชสีมา">นครราชสีมา</option><option value="15.8700,100.9925,Thailand,ประเทศไทย">ประเทศไทย (จุดอ้างอิงกลาง)</option></select></div>
+      <button id="refresh-weather" class="primary-btn"><span aria-hidden="true">↻</span> อัปเดตข้อมูล</button>
+    </section>
+
+    <section class="stats-grid" aria-label="สภาพอากาศปัจจุบัน">
+      <article class="stat-card"><div class="stat-top"><span>อุณหภูมิ</span><span class="stat-icon sun-icon">☼</span></div><strong id="temperature">--<small>°C</small></strong><p id="feels-like">รู้สึกเหมือน --°C</p></article>
+      <article class="stat-card"><div class="stat-top"><span>ปริมาณฝนขณะนี้</span><span class="stat-icon rain-icon">☂</span></div><strong id="rain-now">--<small> mm</small></strong><p>ค่าประมาณจากแบบจำลองอากาศ</p></article>
+      <article class="stat-card"><div class="stat-top"><span>ความชื้นสัมพัทธ์</span><span class="stat-icon humidity-icon">◌</span></div><strong id="humidity">--<small>%</small></strong><p>ความชื้นในอากาศ</p></article>
+      <article class="stat-card"><div class="stat-top"><span>ความเร็วลม</span><span class="stat-icon wind-icon">≋</span></div><strong id="wind-speed">--<small> km/h</small></strong><p id="wind-direction">ทิศทางลม --</p></article>
+    </section>
+
+    <section class="content-grid">
+      <article class="panel map-panel"><div class="section-heading"><div><div class="eyebrow">LIVE MAP VIEW</div><h2>แผนที่พื้นที่ติดตาม</h2></div><span class="data-badge"><span class="live-dot"></span> แผนที่ออนไลน์</span></div>
+        <div id="map" role="application" aria-label="แผนที่ประเทศไทย"></div>
+        <div class="map-legend"><span><i class="legend-dot blue"></i> พื้นที่ติดตาม</span><span><i class="legend-dot orange"></i> จุดพยากรณ์</span><span class="map-note">แผนที่พื้นหลังไม่ใช่เรดาร์ฝน</span></div>
+      </article>
+      <article class="panel forecast-panel"><div class="section-heading"><div><div class="eyebrow">NEXT 24 HOURS</div><h2>พยากรณ์รายชั่วโมง</h2></div><span class="muted" id="forecast-date">24 ชั่วโมงถัดไป</span></div>
+        <div id="forecast-list" class="forecast-list"><div class="loading-line">กำลังโหลดพยากรณ์อากาศ…</div></div>
+        <div class="source-note">แหล่งข้อมูล: Open-Meteo · อัปเดตตามข้อมูลที่ API ส่งกลับมา</div>
+      </article>
+    </section>
+
+    <section class="content-grid lower-grid">
+      <article class="panel"><div class="section-heading"><div><div class="eyebrow">WEATHER OUTLOOK</div><h2>แนวโน้มฝน 24 ชั่วโมง</h2></div><span class="muted">ปริมาณฝนรายชั่วโมง</span></div><div id="rain-chart" class="rain-chart" aria-label="กราฟปริมาณฝนรายชั่วโมง"></div><div class="chart-axis"><span>น้อย</span><span>มาก</span></div></article>
+      <article class="panel preparedness"><div class="section-heading"><div><div class="eyebrow">BE PREPARED</div><h2>เช็กลิสต์เตรียมพร้อมน้ำท่วม</h2></div><span class="check-count" id="check-count">0/5</span></div>
+        <p class="muted prep-intro">ทำเครื่องหมายเมื่อเตรียมสิ่งของหรือดำเนินการเรียบร้อยแล้ว</p>
+        <div class="checklist" id="checklist"><label><input type="checkbox"><span>ชาร์จโทรศัพท์และแบตเตอรี่สำรอง</span></label><label><input type="checkbox"><span>เตรียมยา เอกสารสำคัญ และของจำเป็นใส่ถุงกันน้ำ</span></label><label><input type="checkbox"><span>ย้ายปลั๊กไฟและอุปกรณ์ไฟฟ้าขึ้นที่สูงอย่างปลอดภัย</span></label><label><input type="checkbox"><span>ตรวจสอบทางระบายน้ำและติดตามประกาศทางการ</span></label><label><input type="checkbox"><span>วางแผนเส้นทางอพยพและจุดนัดพบกับครอบครัว</span></label></div>
+      </article>
+    </section>
+
+    <section class="panel storm-panel"><div class="section-heading"><div><div class="eyebrow">STORM & FLOOD MONITOR</div><h2>ติดตามพายุและระดับน้ำ</h2></div><span class="demo-badge">ยังไม่เชื่อมข้อมูลเฉพาะทาง</span></div><div class="empty-state"><div class="empty-icon">⌁</div><div><strong>ยังไม่มีข้อมูลพายุหรือสถานีวัดระดับน้ำที่เชื่อมต่อ</strong><p>เวอร์ชันนี้แสดงพยากรณ์อากาศทั่วไปก่อน ยังไม่ได้ดึงเส้นทางพายุ เรดาร์ฝน หรือระดับน้ำจากหน่วยงานโดยตรง จึงไม่แสดงจุดพายุหรือตัวเลขน้ำที่สร้างขึ้นเอง</p></div></div></section>
+
+    <footer><div class="footer-brand"><span class="brand-mark small-mark">T</span><div><strong>TINE DISASTER WATCH</strong><p>Weather awareness for everyone.</p></div></div><div class="footer-links"><a href="https://www.tmd.go.th/" target="_blank" rel="noopener noreferrer">กรมอุตุนิยมวิทยา ↗</a><a href="https://www.thaiwater.net/" target="_blank" rel="noopener noreferrer">ThaiWater ↗</a><a href="https://www.disaster.go.th/" target="_blank" rel="noopener noreferrer">กรมป้องกันและบรรเทาสาธารณภัย ↗</a></div><p class="copyright">เว็บไซต์ต้นแบบเพื่อการติดตามข้อมูลเบื้องต้น ไม่ใช่ระบบเตือนภัยทางการ · แผนที่ © OpenStreetMap contributors</p></footer>
+  </main>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="app.js"></script>
+</body>
+</html>
